@@ -2,7 +2,7 @@ module.exports.config = {
 	name: "setprefix",
 	version: "1.0.1",
 	hasPermssion: 2,
-	credits: "𝐂𝐘𝐁𝐄𝐑 ☢️_𖣘 -𝐁𝐎𝐓 ⚠️ 𝑻𝑬𝑨𝑴_ ☢️",
+	credits: "𓆩𝑴𝒂𝒓𝒖𝒇 𝑺𝒚𝒔𝒕𝒆𝒎𓆪",
 	description: "Reset group prefix",
 	commandCategory: "Group",
 	usages: "[prefix/reset]",
@@ -21,7 +21,13 @@ module.exports.languages ={
 		"missingInput": "Prefix have not to be blank",
 		"resetPrefix": "Reset prefix to: %1",
 		"confirmChange": "Are you sure that you want to change prefix into: %1"
-	}
+	},
+	 "bn": {
+    "successChange": "গ্রুপের prefix পরিবর্তন করা হয়েছে: %1",
+    "missingInput": "নতুন prefix লিখতে হবে, ফাঁকা রাখা যাবে না",
+    "resetPrefix": "ডিফল্ট prefix-এ রিসেট করা হলো: %1",
+    "confirmChange": "তুমি কি নিশ্চিত যে prefix হবে: %1"
+  }
 }
 
 module.exports.handleReaction = async function({ api, event, Threads, handleReaction, getText }) {
