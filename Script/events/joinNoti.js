@@ -12,7 +12,7 @@ module.exports.run = async function ({ api, event }) {
   // যদি বট নিজে গ্রুপে এড হয়
   if (event.logMessageData.addedParticipants.some(i => i.userFbId == api.getCurrentUserID())) {
     const threadInfo = await api.getThreadInfo(threadID);
-    const groupName = threadInfo.threadName || "𓆩𝙎𝙪𝙯𝙪𓆪🥰(すず)💋";
+    const groupName = threadInfo?.threadName?.trim() || "𓆩𝙎𝙪𝙯𝙪𓆪🥰(すず)💋";
     const nickname = `[ ${global.config.PREFIX} ] • ${groupName} Bot`;
 
     await api.changeNickname(nickname, threadID, api.getCurrentUserID());
@@ -33,7 +33,9 @@ ${global.config.PREFIX}menu
 
   // অন্য কেউ join করলে
   try {
-    const { threadName, participantIDs } = await api.getThreadInfo(threadID);
+    const threadInfo = await api.getThreadInfo(threadID);
+    const groupName = threadInfo?.threadName?.trim() || "𓆩𝙎𝙪𝙯𝙪𓆪🥰(すず)💋";
+    const memberCount = threadInfo.participantIDs.length;
     const newUsers = event.logMessageData.addedParticipants;
 
     let mentions = [], nameArray = [];
@@ -42,15 +44,10 @@ ${global.config.PREFIX}menu
       mentions.push({ tag: user.fullName, id: user.userFbId });
     }
 
-    const memberCount = participantIDs.length;
-    const nameToShow = threadName || "𓆩𝙎𝙪𝙯𝙪𓆪🥰(すず)💋";
-
-    const msg = `✨🆆🅴🅻🅻 🅲🅾🅼🅴✨
-[ ${nameArray.join(', ')} ]
-StaY haPpy😘
-『${nameToShow}』
-You are the ${memberCount} No. Member 💫
-From Admin`;
+    const msg = `𝚆𝚎𝚕𝚌𝚘𝚖𝚎 𝙼𝚛/𝙼𝚒𝚜𝚜 [ ${nameArray.join(', ')} ]! 🎉 
+ 𝙵𝚛𝚘𝚖 ouR『${groupName}』
+ 𝚆𝚎'𝚛𝚎 𝚜𝚘 𝚐𝚕𝚊𝚍 𝚝𝚘 𝚑𝚊𝚟𝚎 𝚢𝚘𝚞 𝚠𝚒𝚝𝚑 𝚞𝚜 💫
+ You are the ${memberCount} No. Member 💫`;
 
     return api.sendMessage({ body: msg, mentions }, threadID);
   } catch (err) {
