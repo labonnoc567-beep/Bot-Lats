@@ -10,10 +10,7 @@ module.exports.config = {
   prefix: false
 };
 
-const triggerWords = [
-  "baby", "bot", "bbs", "jan", "pakhi", "বেবি", "জানু", "জান"
-];
-
+const triggerWords = ["baby", "bot", "bbs", "jan", "pakhi", "বেবি", "জানু", "জান"];
 const MARUF_UID = "100070782965051";
 const MONIKA_UID = "100070782965051";
 const MONIKA_NAMES = ["shi zuka", "sizuka", "shizuka", "Princess", "Monika", "princess Monika", "মনিকা", "মনি", "Monika", "Moni"];
@@ -23,8 +20,7 @@ const specialReplies = [
   "বেশি bot Bot করলে leave নিবো কিন্তু😒😒 ", "শুনবো না😼তুমি আমাকে প্রেম করাই দাও নাই🥺পচা তুমি🥺",
   "আমি আবাল দের সাথে কথা বলি না,ok😒", "এতো ডেকো না,প্রেম এ পরে যাবো তো🙈", "Bolo Babu, তুমি কি আমাকে ভালোবাসো? 🙈💋 ",
   "বার বার ডাকলে মাথা গরম হয়ে যায় কিন্তু😑", "হ্যা বলো😒, তোমার জন্য কি করতে পারি😐😑?", "এতো ডাকছিস কেন?গালি শুনবি নাকি? 🤬",
-  "I love you janu🥰", "ummmmmmmmmmmaH💋😋🥰🥀", "আরে Bolo আমার জান ,কেমন আছো?😚 ",
-  "হুম, কেমন আছো? 😊"
+  "I love you janu🥰", "ummmmmmmmmmmaH💋😋🥰🥀", "আরে Bolo আমার জান ,কেমন আছো?😚 ", "হুম, কেমন আছো? 😊"
 ];
 
 const smartReplies = [
@@ -32,7 +28,7 @@ const smartReplies = [
   "একটা গান শুনা😜", "এতো ডাকিস কেন ?", "এইখানে কি শশুর বাড়ি যা",
   "ওই জান, মন খারাপ? আমার কাছে আয়! 💖", "তুই আসলেই আলাদা! 🫶", "তোর মতো বন্ধুর জন্য সব পারি! 😌",
   "তুই এতো বুদ্ধিমান কিভাবে হলি বল তো? 🤔", "একটু চা খাওয়াবি? ☕", "সবসময় আমাকেই চিন্তা করিস নাকি?",
-  "হুম, তোর msg পড়েই ভালো লাগল! 😘", "তুই না থাকলে একা লাগতো! 🥲", "তুই আসলেই দারুণ! 🌸", " চা খাই তুই?",
+  "হুম, তোর msg পড়েই ভালো লাগল! 😘", "তুই না থাকলে একা লাগতো! 🥲", "তুই আসলেই দারুণ! 🌸", "চা খাই তুই?"
 ];
 
 const contextualReplies = {
@@ -44,9 +40,9 @@ const contextualReplies = {
   "love you": ["Love you toooo jaan 😘", "তুই আমার হিয়ার মাঝে রে! 💞"],
   "tui koi": ["তোর মনে, তোর স্বপ্নে, everywhere 😌", "পাশেই আছি বোকা!"],
   "single": ["তোর জন্যই তো সিঙ্গেল বসে আছি 😒", "তুই রাজি থাকলে আর সিঙ্গেল না! 😏"],
-  "ki koros": ["চা খাই তুই😋?", " চিপায় বসে আছি", "তোকে কেন বলবো"," চুপ কর"],
-  "ki koro": ["চা খাই তুই😋?", " চিপায় বসে আছি", "তোকে কেন বলবো"," চুপ কর"],
-  "কি করো": ["চা খাই তুই😋?", " চিপায় বসে আছি", "তোকে কেন বলবো"," চুপ কর"]
+  "ki koros": ["চা খাই তুই😋?", " চিপায় বসে আছি", "তোকে কেন বলবো", "চুপ কর"],
+  "ki koro": ["চা খাই তুই😋?", " চিপায় বসে আছি", "তোকে কেন বলবো", "চুপ কর"],
+  "কি করো": ["চা খাই তুই😋?", " চিপায় বসে আছি", "তোকে কেন বলবো", "চুপ কর"]
 };
 
 let botPausedUntil = 0;
@@ -62,7 +58,7 @@ async function isSenderAdmin(event, api) {
   if (event.senderID === MARUF_UID) return true;
   try {
     const threadInfo = await api.getThreadInfo(event.threadID);
-    return threadInfo.adminIDs.map(e=>e.id).includes(event.senderID);
+    return threadInfo.adminIDs.map(e => e.id).includes(event.senderID);
   } catch { return false; }
 }
 
@@ -85,8 +81,8 @@ module.exports.handleEvent = async function ({ api, event }) {
 
     let isMonikaMentioned = mentionIDs.includes(MONIKA_UID);
     MONIKA_NAMES.forEach(name => {
-  if (msg.toLowerCase().includes(name.toLowerCase())) isMonikaMentioned = true;
-});
+      if (msg.toLowerCase().includes(name.toLowerCase())) isMonikaMentioned = true;
+    });
 
     let isMarufMentioned = mentionIDs.includes(MARUF_UID);
     if (msg.toLowerCase().includes("@maruf") || msg.toLowerCase().includes("maruf billah")) isMarufMentioned = true;
@@ -104,38 +100,40 @@ module.exports.handleEvent = async function ({ api, event }) {
 
     if (isOnlyEmoji(msg)) return;
 
-   // 1. Trigger word
-if (isTrigger(msg)) {
-  let reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
-  return api.sendMessage(reply, event.threadID, event.messageID);
-}
-
-// 2. Contextual replies (only if reply to bot or bot mention)
-if (event.messageReply?.senderID === api.getCurrentUserID() || mentionIDs.includes(api.getCurrentUserID())) {
-  const lowerMsg = msg.toLowerCase();
-  for (const key in contextualReplies) {
-    if (lowerMsg.includes(key)) {
-      const replies = contextualReplies[key];
-      const chosen = replies[Math.floor(Math.random() * replies.length)];
-      return api.sendMessage(chosen, event.threadID, event.messageID);
+    // 1. Trigger word -> specialReplies
+    if (isTrigger(msg)) {
+      let reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
+      return api.sendMessage(reply, event.threadID, event.messageID);
     }
-  }
-}
 
-// 3. Smart reply if replied to bot (fallback)
-if (event.messageReply?.senderID === api.getCurrentUserID()) {
-  let reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
-  return api.sendMessage(reply, event.threadID, event.messageID);
-}
-  }
-}
-    return;
+    // 2. Contextual replies (if mention or bot reply)
+    if (event.messageReply?.senderID === api.getCurrentUserID() || mentionIDs.includes(api.getCurrentUserID())) {
+      const lowerMsg = msg.toLowerCase();
+      for (const key in contextualReplies) {
+        if (lowerMsg.includes(key)) {
+          const replies = contextualReplies[key];
+          const chosen = replies[Math.floor(Math.random() * replies.length)];
+          return api.sendMessage(chosen, event.threadID, event.messageID);
+        }
+      }
+    }
+
+    // 3. Smart reply if replied to bot
+    if (event.messageReply?.senderID === api.getCurrentUserID()) {
+      let reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
+      return api.sendMessage(reply, event.threadID, event.messageID);
+    }
+
+    // 4. Final fallback: always reply something
+    let reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
+    return api.sendMessage(reply, event.threadID, event.messageID);
+
   } catch (e) {
     console.log(e);
   }
 };
 
-module.exports.run = async function({ api, event }) {
+module.exports.run = async function ({ api, event }) {
   const reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
   return api.sendMessage(reply, event.threadID, event.messageID);
 };
