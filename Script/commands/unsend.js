@@ -1,24 +1,22 @@
 module.exports.config = {
   name: "unsend",
   version: "1.0.0",
-  hasPermssion: 0, // সবাই ইউজ করতে পারবে
-  credits: "Sizu💟🦋 & Maruf System💫",
-  description: "Unsend any message by replying to it.",
-  commandCategory: "utility",
+  hasPermssion: 0,
+  credits: "𓆩𝑴𝒂𝒓𝒖𝒇 𝑺𝒚𝒔𝒕𝒆𝒎𓆪",
+  description: "Unsend replied message with 😚 react only",
+  commandCategory: "Utility",
   usages: "[reply a message]",
   cooldowns: 3,
 };
 
 module.exports.run = async function({ api, event }) {
-  const messageID = event.messageReply?.messageID;
-  if (!messageID)
-    return api.sendMessage("⚠️ দয়া করে যেই মেসেজটা আনসেন্ড করতে চাও সেটা reply করো!", event.threadID, event.messageID);
+  const { messageReply, threadID, messageID } = event;
+  if (!messageReply || !messageReply.messageID) return;
 
   try {
-    await api.unsendMessage(messageID);
-    // Just react with 😚 without sending any message
-    api.setMessageReaction("😚", event.messageID, () => {}, true);
-  } catch (err) {
-    api.sendMessage("❌ আনসেন্ড করতে সমস্যা হচ্ছে!", event.threadID, event.messageID);
+    await api.unsendMessage(messageReply.messageID);
+    api.setMessageReaction("😚", messageID, () => {}, true);
+  } catch (e) {
+    api.setMessageReaction("❌", messageID, () => {}, true);
   }
 };
