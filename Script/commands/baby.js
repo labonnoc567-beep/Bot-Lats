@@ -121,14 +121,17 @@ module.exports.handleEvent = async function ({ api, event }) {
       return api.sendMessage(reply, event.threadID, event.messageID);
     }
 
-    // 3. Contextual replies
-    for (const key in contextualReplies) {
-      if (msg.toLowerCase().includes(key)) {
-        const replies = contextualReplies[key];
-        const chosen = replies[Math.floor(Math.random() * replies.length)];
-        return api.sendMessage(chosen, event.threadID, event.messageID);
-      }
+// 3. Contextual replies (only if reply to bot or mention bot)
+if (repliedToBot || mentionIDs.includes(api.getCurrentUserID())) {
+  const lowerMsg = msg.toLowerCase();
+  for (const key in contextualReplies) {
+    if (lowerMsg.includes(key)) {
+      const replies = contextualReplies[key];
+      const chosen = replies[Math.floor(Math.random() * replies.length)];
+      return api.sendMessage(chosen, event.threadID, event.messageID);
     }
+  }
+}
 
     return;
   } catch (e) {
