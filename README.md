@@ -1,7 +1,7 @@
 # 𓆩𝙎𝙪𝙯𝙪𓆪🥰(すず)💋
 
 A smart, multilingual, and customizable Facebook Messenger bot powered by Node.js.  
-Made with ❤️ by **Butterfly Sizu💟🦋 & Maruf System💫**
+Made with ❤️ by **𓆩𝑴𝒂𝒓𝒖𝒇 𝑺𝒚𝒔𝒕𝒆𝒎𓆪**
 
 ---
 
