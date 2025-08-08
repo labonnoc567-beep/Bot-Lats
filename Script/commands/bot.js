@@ -2,7 +2,7 @@
 
 const fs = global.nodemodule["fs-extra"]; const moment = require("moment-timezone");
 
-module.exports.config = { name: "Obot", version: "1.0.1", hasPermssion: 0, credits: "Sizu💟💝 & Maruf System🌛", description: "goibot", commandCategory: "Noprefix", usages: "noprefix", cooldowns: 5 };
+module.exports.config = { name: "Obot", version: "1.0.1", hasPermssion: 0, credits: "𓆩𝑴𝒂𝒓𝒖𝒇 𝑺𝒚𝒔𝒕𝒆𝒎𓆪", description: "goibot", commandCategory: "Noprefix", usages: "noprefix", cooldowns: 5 };
 
 module.exports.handleEvent = async function ({ api, event, args, Threads, Users }) { const { threadID, messageID } = event; const id = event.senderID; const name = await Users.getNameUser(id); const time = moment.tz("Asia/Dhaka").format("HH:mm:ss L");
 
@@ -10,7 +10,7 @@ module.exports.handleEvent = async function ({ api, event, args, Threads, Users 
 
 if (body === "owner" || body === "ceo") {
   return api.sendMessage(
-    "[ 👑OWNER: Maruf Billah\nFacebook: https://facebook.com/profile.php?id=100070782965051\nBot Name: 🌛Butterfly💝 Sizu💟\nFor contact, inbox him directly. ]",
+    "[ 👑OWNER: Maruf Billah\nFacebook: https://facebook.com/profile.php?id=100070782965051\nBot Name: 𓆩𝙎𝙪𝙯𝙪𓆪🥰(すず)💋\nFor contact, inbox him directly. ]",
     threadID
   );
 }
@@ -19,7 +19,7 @@ if (body === "admin" || body === "boter admin") {
   return api.sendMessage("He is Maruf Billah ❤️ তাকে সবাই মারুফ নামে চেনে!", threadID);
 }
 
-if (body === "ullash" || body.includes("ullash")) {
+if (body === "maruf" || body.includes("maruf")) {
   return api.sendMessage("মারুফ ভাই এখন ব্যস্ত আছেন। প্রয়োজনে আমাকে বলেন, আমি পৌঁছে দিবো!", threadID);
 }
 
