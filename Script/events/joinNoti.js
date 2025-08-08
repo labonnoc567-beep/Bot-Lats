@@ -21,8 +21,8 @@ module.exports.run = async function ({ api, event }) {
 𝐓𝐡𝐚𝐧𝐤 𝐲𝐨𝐮 𝐬𝐨 𝐦𝐮𝐜𝐡 𝐟𝐨𝐫 𝐚𝐝𝐝𝐢𝐧𝐠 𝐦𝐞 𝐭𝐨 𝐲𝐨𝐮𝐫 𝐠𝐫𝐨𝐮𝐩-🖤🤗
 𝐈 𝐰𝐢𝐥𝐥 𝐚𝐥𝐰𝐚𝐲𝐬 𝐬𝐞𝐫𝐯𝐞 𝐲𝐨𝐮 𝐢𝐧𝐬𝐡𝐚𝐥𝐥𝐚𝐡 🌺❤️
 𝐓𝐨 𝐯𝐢𝐞𝐰 𝐜𝐨𝐦𝐦𝐚𝐧𝐝𝐬:
-${global.config.PREFIX}help
-${global.config.PREFIX}menu
+${global.config.PREFIX}/help
+${global.config.PREFIX}/menu
 
 𝐁𝐎𝐓 𝐍𝐀𝐌𝐄 : ${groupName} Bot
 
@@ -44,11 +44,12 @@ ${global.config.PREFIX}menu
       mentions.push({ tag: user.fullName, id: user.userFbId });
     }
 
-    const msg = `𝚆𝚎𝚕𝚌𝚘𝚖𝚎 𝙼𝚛/𝙼𝚒𝚜𝚜 [ ${nameArray.join(', ')} ]! 🎉 
- 𝙵𝚛𝚘𝚖 ouR『${groupName}』
- 𝚆𝚎'𝚛𝚎 𝚜𝚘 𝚐𝚕𝚊𝚍 𝚝𝚘 𝚑𝚊𝚟𝚎 𝚢𝚘𝚞 𝚠𝚒𝚝𝚑 𝚞𝚜 💫
- You are the ${memberCount} No. Member 💫`;
+    const msg = `𝐖𝐞𝐥𝐜𝐨𝐦𝐞 𝐌𝐫/𝐌𝐢𝐬𝐬.[ ${nameArray.join(', ')} ]! 🎉
+𝐅𝐫𝐨𝐦 𝐎𝐮𝐫『${groupName}』
+𝚆𝚎'𝚛𝚎 𝚜𝚘 𝚐𝚕𝚊𝚍 𝚝𝚘 𝚑𝚊𝚟𝚎 𝚢𝚘𝚞 𝚠𝚒𝚝𝚑 𝚞𝚜 💫
+𝗬𝗼𝘂 𝗮𝗿𝗲 𝘁𝗵𝗲 ${memberCount} 𝗡𝗼. 𝗠𝗲𝗺𝗯𝗲𝗿 `;
 
+    
     return api.sendMessage({ body: msg, mentions }, threadID);
   } catch (err) {
     console.log("❌ joinNoti Error:", err);
