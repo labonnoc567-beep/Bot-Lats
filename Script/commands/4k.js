@@ -9,9 +9,8 @@ const baseApiUrl = async () => {
 
 module.exports.config = {
   name: "4k",
-  aliases: ["4k", "remini"],
   category: "enhanced",
-  author: "Romim"
+  author: "𝑴𝒂𝒓𝒖𝒇"
 };
 
 module.exports.onStart = async ({ api, event, args }) => {
