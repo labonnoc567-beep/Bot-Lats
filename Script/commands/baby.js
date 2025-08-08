@@ -104,25 +104,14 @@ module.exports.handleEvent = async function ({ api, event }) {
 
     if (isOnlyEmoji(msg)) return;
 
-    // 1. Trigger word
-    if (isTrigger(msg)) {
-      let reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
-      return api.sendMessage(reply, event.threadID, event.messageID);
-    }
+   // 1. Trigger word
+if (isTrigger(msg)) {
+  let reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
+  return api.sendMessage(reply, event.threadID, event.messageID);
+}
 
-    // 2. Someone replied to a bot's message
-    const repliedToBot =
-      event.messageReply &&
-      event.messageReply.senderID &&
-      (event.messageReply.senderID === api.getCurrentUserID());
-
-    if (repliedToBot) {
-      let reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
-      return api.sendMessage(reply, event.threadID, event.messageID);
-    }
-
-// 3. Contextual replies (only if reply to bot or mention bot)
-if (repliedToBot || mentionIDs.includes(api.getCurrentUserID())) {
+// 2. Contextual replies (only if reply to bot or bot mention)
+if (event.messageReply?.senderID === api.getCurrentUserID() || mentionIDs.includes(api.getCurrentUserID())) {
   const lowerMsg = msg.toLowerCase();
   for (const key in contextualReplies) {
     if (lowerMsg.includes(key)) {
@@ -133,6 +122,13 @@ if (repliedToBot || mentionIDs.includes(api.getCurrentUserID())) {
   }
 }
 
+// 3. Smart reply if replied to bot (fallback)
+if (event.messageReply?.senderID === api.getCurrentUserID()) {
+  let reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
+  return api.sendMessage(reply, event.threadID, event.messageID);
+}
+  }
+}
     return;
   } catch (e) {
     console.log(e);
