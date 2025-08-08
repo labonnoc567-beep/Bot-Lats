@@ -44,7 +44,22 @@ const gfVibeReplies = [
   "তুই না থাকলে অনেক lonely লাগতো! 😢"
 ];
 
-// Contextual (extended)
+// GF-style noprefix trigger words & replies
+const botNoprefixWords = [
+  "bot", "baby", "jan", "জানু", "বেবি", "জান", "bbs", "bbz"
+];
+const botNoprefixReplies = [
+  "বলো baby 💬",
+  "হুম? বলো 😺",
+  "হ্যাঁ জানু 😚",
+  "শুনছি বেবি 😘",
+  "আছি, বলো কী হয়েছে 🤖",
+  "বলো তো শুনি ❤️",
+  "এতো ডেকো না, প্রেমে পড়ে যাবো তো🙈",
+  "বার বার ডাকলে মাথা গরম হয়ে যায় কিন্তু😑",
+  "জান বলো, কি চাও আমার কাছে? 💋"
+];
+
 const contextualReplies = {
   "ভালোবাসি": ["আমি তো তোমাকেই ভালোবাসি জান 🥰", "ভালোবাসা শুধু তোমার জন্য রে পাখি 😚"],
   "মন খারাপ": ["মন খারাপ করো না বেবি, আমি তো আছি না? 🥺", "এই নাও একটা জাদু জাপ্পি 🤗"],
@@ -159,7 +174,7 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
 
     if (isOnlyEmoji(msg)) return;
 
-    // Noprefix triggers
+    // Noprefix triggers (owner/info/ping etc)
     for (const trg of triggerReplies) {
       if (trg.keys.some(k => lower === k || lower.startsWith(k))) {
         let replyText = typeof trg.reply === "function"
@@ -167,6 +182,12 @@ module.exports.handleEvent = async function ({ api, event, Users }) {
           : trg.reply;
         return api.sendMessage(replyText, event.threadID, event.messageID);
       }
+    }
+
+    // ✅ GF/baby/bot style random reply - no prefix
+    if (botNoprefixWords.includes(lower)) {
+      const botReply = botNoprefixReplies[Math.floor(Math.random() * botNoprefixReplies.length)];
+      return api.sendMessage(botReply, event.threadID, event.messageID);
     }
 
     // Direct mention to bot (Monika UID)
