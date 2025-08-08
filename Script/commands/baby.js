@@ -83,23 +83,23 @@ module.exports.handleEvent = async function ({ api, event }) {
     const mentionObj = event.mentions || {};
     const mentionIDs = Object.keys(mentionObj);
 
-    let isShizukaMentioned = mentionIDs.includes(SHIZUKA_UID);
-    SHIZUKA_NAMES.forEach(name => {
-      if (msg.toLowerCase().includes("@" + name)) isShizukaMentioned = true;
+    let isMonikaMentioned = mentionIDs.includes(MONIKA_UID);
+    MONIKA_NAMES.forEach(name => {
+      if (msg.toLowerCase().includes("@" + name)) isMonikaMentioned = true;
     });
 
     let isMarufMentioned = mentionIDs.includes(MARUF_UID);
     if (msg.toLowerCase().includes("@maruf") || msg.toLowerCase().includes("maruf billah")) isMarufMentioned = true;
 
-    if (isShizukaMentioned) {
+    if (isMonikaMentioned) {
       if (event.senderID === MARUF_UID) {
         return api.sendMessage("জি,  আমি এক্ষুনি উনাকে ডেকে আনছি, কোন টাকা লাগবেনা🥺❤️", event.threadID, event.messageID);
       } else {
-        return api.sendMessage("উনাকে মেনশন করার সাহস হয় কি করে, আগে ৫০০০ টাকা  দে জরিমানা🤬" আমার বউকে মেনশন করার আগে সাত বার ভাববি, event.threadID, event.messageID);
+        return api.sendMessage("উনাকে মেনশন করার সাহস হয় কি করে, আগে ৫০০০ টাকা  দে জরিমানা🤬\nআমার বউকে মেনশন করার আগে সাত বার ভাববি", event.threadID, event.messageID);
       }
     }
     if (isMarufMentioned) {
-      return api.sendMessage("আগে বস মারুফ কে একটা জি এফ দাও তারপর উনাকে ডাকো🤭", "জি এফ পাইছো নাকি বস এর😒", " আমাকে বলো আমি বসকে বলে দিব!😝", event.threadID, event.messageID);
+      return api.sendMessage("আগে বস মারুফ কে একটা জি এফ দাও তারপর উনাকে ডাকো🤭", event.threadID, event.messageID);
     }
 
     if (isOnlyEmoji(msg)) return;
