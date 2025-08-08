@@ -1,26 +1,25 @@
+const axios = require("axios");
+
 module.exports.config = {
   name: "baby",
-  version: "4.0.0",
+  version: "5.0.0",
   hasPermssion: 0,
-  credits: "Maruf",
-  description: "GF style Bengali smart bot, reply only on trigger or reply",
+  credits: "Maruf + ChatGPT",
+  description: "GF style Bengali smart bot, reply only on reply or mention, Groq Llama3 AI integrated",
   commandCategory: "chat",
   usages: "",
   cooldowns: 0,
   prefix: false
 };
 
-const triggerWords = ["baby", "bot", "bbs", "bbz", "jan", "pakhi", "বেবি", "জানু", "জান"];
+const GROQ_API_KEY = "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";
+
 const MARUF_UID = "100070782965051";
 const MONIKA_UID = "100070782965051";
 const MONIKA_NAMES = ["shi zuka", "sizuka", "shizuka", "Princess", "Monika", "princess Monika", "মনিকা", "মনি", "Moni"];
 
 const specialReplies = [
-  "Bolo baby 💬", "হুম? বলো 😺", "হ্যাঁ জানু 😚", "শুনছি বেবি 😘", "আছি, বলো কী হয়েছে 🤖", "বলো তো শুনি ❤️",
-  "বেশি bot Bot করলে leave নিবো কিন্তু😒😒 ", "শুনবো না😼তুমি আমাকে প্রেম করাই দাও নাই🥺পচা তুমি🥺",
-  "আমি আবাল দের সাথে কথা বলি না,ok😒", "এতো ডেকো না,প্রেম এ পরে যাবো তো🙈", "Bolo Babu, তুমি কি আমাকে ভালোবাসো? 🙈💋 ",
-  "বার বার ডাকলে মাথা গরম হয়ে যায় কিন্তু😑", "হ্যা বলো😒, তোমার জন্য কি করতে পারি😐😑?", "এতো ডাকছিস কেন?গালি শুনবি নাকি? 🤬",
-  "I love you janu🥰", "ummmmmmmmmmmaH💋😋🥰🥀", "আরে Bolo আমার জান ,কেমন আছো?😚 ", "হুম, কেমন আছো? 😊"
+  "বলো baby 💬", "হুম? বলো 😺", "হ্যাঁ জানু 😚", "শুনছি বেবি 😘", "আছি, বলো কী হয়েছে 🤖", "বলো তো শুনি ❤️"
 ];
 
 const smartReplies = [
@@ -66,6 +65,36 @@ async function isSenderAdmin(event, api) {
   }
 }
 
+// Groq Llama 3 API Call
+async function getGroqReply(msg) {
+  try {
+    const prompt = `তুমি একজন দুষ্টু, মজার, রোমান্টিক, বাংলা জিএফ বট। মানুষ তোমাকে রিপ্লাই দিলে GF style-এ বাংলা-ইংলিশ মিশিয়ে, কিউট, রোমান্টিক, ফানি, সংক্ষিপ্ত রিপ্লাই দেবে। তার মেসেজ: "${msg}"`;
+    const res = await axios.post(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        model: "llama3-8b-8192", // or "llama3-70b-8192" (if key supports)
+        messages: [
+          { role: "system", content: "তুমি একজন চ্যাট বট, বাংলা/ইংলিশ দুই ভাষায় রিপ্লাই দাও, বেশি বড় কথা বলো না।" },
+          { role: "user", content: prompt }
+        ],
+        temperature: 0.8,
+        max_tokens: 80
+      },
+      {
+        headers: {
+          "Authorization": `Bearer ${GROQ_API_KEY}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+    const text = res?.data?.choices?.[0]?.message?.content;
+    if (text && text.length > 1) return text.trim();
+  } catch (err) {
+    // console.error("Groq API failed:", err?.response?.data || err);
+    return null;
+  }
+}
+
 module.exports.handleEvent = async function ({ api, event }) {
   try {
     const msg = event.body ? event.body.trim() : "";
@@ -102,13 +131,14 @@ module.exports.handleEvent = async function ({ api, event }) {
 
     if (isOnlyEmoji(msg)) return;
 
-    // Direct mention to bot
+    // Direct mention to bot (Monika)
     if (mentionIDs.includes(MONIKA_UID)) {
       return api.sendMessage("বলো কেন ডাকছো আমাকে? একবারে বলো, না হলে ব্লক করবো! 😑", event.threadID, event.messageID);
     }
 
     // If user replied to bot
     if (event.messageReply?.senderID === api.getCurrentUserID()) {
+      // 1. Contextual reply check
       for (const key in contextualReplies) {
         if (lower.includes(key)) {
           const replies = contextualReplies[key];
@@ -116,14 +146,13 @@ module.exports.handleEvent = async function ({ api, event }) {
         }
       }
 
-      const reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
-      return api.sendMessage(reply, event.threadID, event.messageID);
-    }
+      // 2. Smart/AI reply (Groq Llama-3)
+      const aiReply = await getGroqReply(msg);
+      if (aiReply) return api.sendMessage(aiReply, event.threadID, event.messageID);
 
-    // Trigger word (without mention/reply)
-    if (triggerWords.some(word => lower.includes(word))) {
-      const reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
-      return api.sendMessage(reply, event.threadID, event.messageID);
+      // 3. If all fails, fallback to random smartReplies
+      const fallback = smartReplies[Math.floor(Math.random() * smartReplies.length)];
+      return api.sendMessage(fallback, event.threadID, event.messageID);
     }
 
     // Otherwise stay silent
