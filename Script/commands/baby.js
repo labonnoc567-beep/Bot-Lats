@@ -50,10 +50,6 @@ let botPausedUntil = 0;
 function isOnlyEmoji(str) {
   return !str.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF\uDC00-\uDFFF]|\s|\n)/g, "");
 }
-function isTrigger(text) {
-  text = (text || "").toLowerCase();
-  return triggerWords.some(w => text.includes(w));
-}
 async function isSenderAdmin(event, api) {
   if (event.senderID === MARUF_UID) return true;
   try {
@@ -79,54 +75,48 @@ module.exports.handleEvent = async function ({ api, event }) {
     const mentionObj = event.mentions || {};
     const mentionIDs = Object.keys(mentionObj);
 
-    let isMonikaMentioned = mentionIDs.includes(MONIKA_UID);
-    MONIKA_NAMES.forEach(name => {
-      if (msg.toLowerCase().includes(name.toLowerCase())) isMonikaMentioned = true;
-    });
+    // Special logic: Maruf mentions Monika
+    let isMonikaMentioned = mentionIDs.includes(MONIKA_UID) || MONIKA_NAMES.some(name => msg.toLowerCase().includes(name.toLowerCase()));
+    let isMarufMentioned = mentionIDs.includes(MARUF_UID) || msg.toLowerCase().includes("@maruf") || msg.toLowerCase().includes("maruf billah");
 
-    let isMarufMentioned = mentionIDs.includes(MARUF_UID);
-    if (msg.toLowerCase().includes("@maruf") || msg.toLowerCase().includes("maruf billah")) isMarufMentioned = true;
+    if (isMonikaMentioned && event.senderID === MARUF_UID) {
+      return api.sendMessage("জি, আমি এক্ষুনি উনাকে ডেকে আনছি, কোন টাকা লাগবে না 🥺❤️", event.threadID, event.messageID);
+    }
 
     if (isMonikaMentioned) {
-      if (event.senderID === MARUF_UID) {
-        return api.sendMessage("জি,  আমি এক্ষুনি উনাকে ডেকে আনছি, কোন টাকা লাগবেনা🥺❤️", event.threadID, event.messageID);
-      } else {
-        return api.sendMessage("উনাকে মেনশন করার সাহস হয় কি করে, আগে ৫০০০ টাকা  দে জরিমানা🤬\nআমার বউকে মেনশন করার আগে সাত বার ভাববি", event.threadID, event.messageID);
-      }
+      return api.sendMessage("উনাকে মেনশন করার সাহস হয় কি করে, আগে ৫০০০ টাকা দে জরিমানা🤬\nআমার বউকে মেনশন করার আগে সাত বার ভাববি", event.threadID, event.messageID);
     }
+
     if (isMarufMentioned) {
       return api.sendMessage("আগে বস মারুফ কে একটা জি এফ দাও তারপর উনাকে ডাকো🤭", event.threadID, event.messageID);
     }
 
     if (isOnlyEmoji(msg)) return;
 
-    // 1. Trigger word -> specialReplies
-    if (isTrigger(msg)) {
-      let reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
-      return api.sendMessage(reply, event.threadID, event.messageID);
+    // Bot mention only
+    if (mentionIDs.includes(MONIKA_UID)) {
+      return api.sendMessage("বলো কেন ডাকছো আমাকে? একবারে বলো, না হলে ব্লক করবো! 😑", event.threadID, event.messageID);
     }
 
-    // 2. Contextual replies (if mention or bot reply)
-    if (event.messageReply?.senderID === api.getCurrentUserID() || mentionIDs.includes(api.getCurrentUserID())) {
-      const lowerMsg = msg.toLowerCase();
+    // If user replied to bot
+    if (event.messageReply?.senderID === api.getCurrentUserID()) {
+      const lower = msg.toLowerCase();
+
+      // 1. Contextual reply check
       for (const key in contextualReplies) {
-        if (lowerMsg.includes(key)) {
+        if (lower.includes(key)) {
           const replies = contextualReplies[key];
-          const chosen = replies[Math.floor(Math.random() * replies.length)];
-          return api.sendMessage(chosen, event.threadID, event.messageID);
+          return api.sendMessage(replies[Math.floor(Math.random() * replies.length)], event.threadID, event.messageID);
         }
       }
-    }
 
-    // 3. Smart reply if replied to bot
-    if (event.messageReply?.senderID === api.getCurrentUserID()) {
-      let reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
+      // 2. No match? Use smartReplies
+      const reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
       return api.sendMessage(reply, event.threadID, event.messageID);
     }
 
-    // 4. Final fallback: always reply something
-    let reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
-    return api.sendMessage(reply, event.threadID, event.messageID);
+    // Not a reply to bot, not mention = stay silent
+    return;
 
   } catch (e) {
     console.log(e);
