@@ -10,10 +10,10 @@ module.exports.config = {
   prefix: false
 };
 
-const triggerWords = ["baby", "bot", "bbs", "jan", "pakhi", "বেবি", "জানু", "জান"];
+const triggerWords = ["baby", "bot", "bbs", "bbz", "jan", "pakhi", "বেবি", "জানু", "জান"];
 const MARUF_UID = "100070782965051";
 const MONIKA_UID = "100070782965051";
-const MONIKA_NAMES = ["shi zuka", "sizuka", "shizuka", "Princess", "Monika", "princess Monika", "মনিকা", "মনি", "Monika", "Moni"];
+const MONIKA_NAMES = ["shi zuka", "sizuka", "shizuka", "Princess", "Monika", "princess Monika", "মনিকা", "মনি", "Moni"];
 
 const specialReplies = [
   "Bolo baby 💬", "হুম? বলো 😺", "হ্যাঁ জানু 😚", "শুনছি বেবি 😘", "আছি, বলো কী হয়েছে 🤖", "বলো তো শুনি ❤️",
@@ -50,34 +50,38 @@ let botPausedUntil = 0;
 function isOnlyEmoji(str) {
   return !str.replace(/([\u2700-\u27BF]|[\uE000-\uF8FF]|[\uD83C-\uDBFF\uDC00-\uDFFF]|\s|\n)/g, "");
 }
+
 async function isSenderAdmin(event, api) {
   if (event.senderID === MARUF_UID) return true;
   try {
     const threadInfo = await api.getThreadInfo(event.threadID);
     return threadInfo.adminIDs.map(e => e.id).includes(event.senderID);
-  } catch { return false; }
+  } catch {
+    return false;
+  }
 }
 
 module.exports.handleEvent = async function ({ api, event }) {
   try {
     const msg = event.body ? event.body.trim() : "";
     if (!msg) return;
+    const lower = msg.toLowerCase();
 
-    if (msg.toLowerCase() === "bot stop") {
+    if (lower === "bot stop") {
       const admin = await isSenderAdmin(event, api);
       if (admin) {
         botPausedUntil = Date.now() + 20000;
         return api.sendMessage("bot pause for 20 second boss😘", event.threadID, event.messageID);
       }
     }
+
     if (Date.now() < botPausedUntil) return;
 
     const mentionObj = event.mentions || {};
     const mentionIDs = Object.keys(mentionObj);
 
-    // Special logic: Maruf mentions Monika
-    let isMonikaMentioned = mentionIDs.includes(MONIKA_UID) || MONIKA_NAMES.some(name => msg.toLowerCase().includes(name.toLowerCase()));
-    let isMarufMentioned = mentionIDs.includes(MARUF_UID) || msg.toLowerCase().includes("@maruf") || msg.toLowerCase().includes("maruf billah");
+    const isMonikaMentioned = mentionIDs.includes(MONIKA_UID) || MONIKA_NAMES.some(name => lower.includes(name.toLowerCase()));
+    const isMarufMentioned = mentionIDs.includes(MARUF_UID) || lower.includes("@maruf") || lower.includes("maruf billah");
 
     if (isMonikaMentioned && event.senderID === MARUF_UID) {
       return api.sendMessage("জি, আমি এক্ষুনি উনাকে ডেকে আনছি, কোন টাকা লাগবে না 🥺❤️", event.threadID, event.messageID);
@@ -93,16 +97,13 @@ module.exports.handleEvent = async function ({ api, event }) {
 
     if (isOnlyEmoji(msg)) return;
 
-    // Bot mention only
+    // Direct mention to bot
     if (mentionIDs.includes(MONIKA_UID)) {
       return api.sendMessage("বলো কেন ডাকছো আমাকে? একবারে বলো, না হলে ব্লক করবো! 😑", event.threadID, event.messageID);
     }
 
     // If user replied to bot
     if (event.messageReply?.senderID === api.getCurrentUserID()) {
-      const lower = msg.toLowerCase();
-
-      // 1. Contextual reply check
       for (const key in contextualReplies) {
         if (lower.includes(key)) {
           const replies = contextualReplies[key];
@@ -110,12 +111,17 @@ module.exports.handleEvent = async function ({ api, event }) {
         }
       }
 
-      // 2. No match? Use smartReplies
       const reply = smartReplies[Math.floor(Math.random() * smartReplies.length)];
       return api.sendMessage(reply, event.threadID, event.messageID);
     }
 
-    // Not a reply to bot, not mention = stay silent
+    // Trigger word (without mention/reply)
+    if (triggerWords.some(word => lower.includes(word))) {
+      const reply = specialReplies[Math.floor(Math.random() * specialReplies.length)];
+      return api.sendMessage(reply, event.threadID, event.messageID);
+    }
+
+    // Otherwise stay silent
     return;
 
   } catch (e) {
