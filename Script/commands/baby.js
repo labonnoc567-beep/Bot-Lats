@@ -85,8 +85,8 @@ module.exports.handleEvent = async function ({ api, event }) {
 
     let isMonikaMentioned = mentionIDs.includes(MONIKA_UID);
     MONIKA_NAMES.forEach(name => {
-      if (msg.toLowerCase().includes("@" + name)) isMonikaMentioned = true;
-    });
+  if (msg.toLowerCase().includes(name.toLowerCase())) isMonikaMentioned = true;
+});
 
     let isMarufMentioned = mentionIDs.includes(MARUF_UID);
     if (msg.toLowerCase().includes("@maruf") || msg.toLowerCase().includes("maruf billah")) isMarufMentioned = true;
