@@ -49,7 +49,7 @@ const gfVibeReplies = [
 
 // GF-style noprefix trigger words & replies
 const botNoprefixWords = [
-  "bot", "baby", "jan", "জানু", "বেবি", "জান", "bbs", "bbz"
+  "bot", "baby", "jan", "জানু", "বেবি", "জান", "বট", "bbs", "bbz"
 ];
 const botNoprefixReplies = [
   "বলো baby 💬",
