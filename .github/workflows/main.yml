@@ -34,3 +34,5 @@ jobs:
       env:
         PORT: 8080
       run: npm start
+      - name: Railway Deploy
+  uses: bervProject/railway-deploy@0.1.2-beta
